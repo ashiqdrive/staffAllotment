@@ -1,0 +1,20 @@
+{%block content%}
+
+<h1>Staff Allotment</h1>
+<br>
+<p>The Staff Count is : {{StaffListCount}} </p>
+
+{% if StaffNamesList %}
+	<p>Names of Staffs</p>
+	<ul>
+		{% for staffNames in StaffNamesList %}
+		<li>
+			{{staffNames.name}}
+		</li>
+		{% endfor %}
+	</ul>
+{% else %}
+	<p>There are no Staffs</p>
+{% endif %}
+
+{% endblock %}
