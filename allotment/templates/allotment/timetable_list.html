@@ -1,0 +1,20 @@
+{%block content%}
+
+ <h1>Timetable List</h1>
+
+    {% if timetable_list %}
+    <ul>
+
+      {% for t in timetable_list %}
+      <li>
+        <a href="{{ t.get_absolute_url }}">{{ t.shortname }}</a>, {{t.longName}}
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    {% else %}
+      <p>No Timetables, Create a new one</p>
+      <p>Timetables will be listed here</p>
+    {% endif %}      
+{% endblock %}

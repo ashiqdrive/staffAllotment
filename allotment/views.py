@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Shift, Department, Staff
+from .models import Shift, Department, Staff, TimeTable
 
 def index(request):
 	"""View Function of Home Page"""
@@ -13,3 +13,9 @@ def index(request):
 	}
 
 	return render(request,'index.html', context=context)
+
+from django.views import generic
+
+class timetableList(generic.ListView):
+	#Generic Class Based List view for Timetable
+	model = TimeTable
