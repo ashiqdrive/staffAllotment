@@ -1,0 +1,14 @@
+
+{% block content %}
+
+<h1>Delete Timetable</h1>
+
+<p>Are you sure you want to delete the Timetable: {{ timetable.longName }}?</p>
+<p>This will delete all the exam dates and staff allotment related to this timetable</p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" action="" value="Yes, delete." />
+</form>
+
+{% endblock %}

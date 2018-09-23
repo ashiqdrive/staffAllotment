@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
 
 class Shift(models.Model):
     name=models.CharField(max_length=25)
@@ -42,6 +43,14 @@ class TimeTable(models.Model):
         verbose_name_plural = "TimeTables"
     def __str__(self):
         return f' {self.shortname}'
+    def get_update_url(self):
+        return reverse('timetable_update', args=[str(self.id)])
+    def get_delete_url(self):
+        return reverse('timetable_delete', args=[str(self.id)])
+    def get_add_examdates_url(self):
+        return reverse('add_exam', args=[str(self.id)])
+    def get_details_url(self):
+        return reverse ('timetable_detail', args=[str(self.id)])
 
 class Exam(models.Model):
     class Meta:
