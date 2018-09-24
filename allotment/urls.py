@@ -11,12 +11,9 @@ urlpatterns += [
     path('timetable/create/', views.TimeTableCreate.as_view(), name='timetable_create'),
     path('timetable/<int:pk>/update/', views.TimeTableUpdate.as_view(), name='timetable_update'),
     path('timetable/<int:pk>/delete/', views.TimeTableDelete.as_view(), name='timetable_delete'),
-]
-
-urlpatterns += [
     path('timetable/<int:pk>/detail/', views.timetable_detail, name='timetable_detail'),
 ]
 
 urlpatterns += [
-    path('timetable/<int:pk>/addexam/', views.add_exam, name='add_exam'),
+    path('exam/create', views.ExamCreate.as_view(),name='exam_create'),
 ]

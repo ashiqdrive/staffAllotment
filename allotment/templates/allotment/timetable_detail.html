@@ -2,9 +2,7 @@
 
 <h1>Time Table Details</h1>
 <br>
-
-<a href={{go_to_add_examdates}}>Add Exams</a>
-
+<a href="{% url 'exam_create' %}">Add Exams</a>
 <p>Exam dates in {{ timetableName}} timetable </p>
 {% if examDateList %}
 	<p>Exam Dates</p>

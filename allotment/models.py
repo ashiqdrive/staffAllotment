@@ -47,8 +47,6 @@ class TimeTable(models.Model):
         return reverse('timetable_update', args=[str(self.id)])
     def get_delete_url(self):
         return reverse('timetable_delete', args=[str(self.id)])
-    def get_add_examdates_url(self):
-        return reverse('add_exam', args=[str(self.id)])
     def get_details_url(self):
         return reverse ('timetable_detail', args=[str(self.id)])
 
@@ -59,7 +57,7 @@ class Exam(models.Model):
         verbose_name = "Exam"
         verbose_name_plural = "Exams"
 
-    timetable_id=models.ForeignKey(TimeTable,on_delete=models.CASCADE, blank=False)
+    timetable_id=models.ForeignKey(TimeTable,on_delete=models.CASCADE,blank=False)
     dateOfExam=models.DateField(null=False, blank=False, default=timezone.now)
     noOfStudents=models.IntegerField(null=False, blank=True, default=0, help_text='No of students appearing for this exam')
     staffs=models.ManyToManyField(Staff, help_text='Select staffs for the exam', blank=True)
