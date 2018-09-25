@@ -2,19 +2,19 @@
 
 <h1>Time Table Details</h1>
 <br>
-<a href="{% url 'exam_create' %}">Add Exams</a>
-<p>Exam dates in {{ timetableName}} timetable </p>
+<a href="{% url 'exam_create' %}"><h2> Add Exams </h2> </a>
+<h2>{{ timetableName }}</h2>
 {% if examDateList %}
 	<p>Exam Dates</p>
 	<ul>
 		{% for e in examDateList %}
 		<li>
-			{{e.dateOfExam}}
+			{{e.dateOfExam}} <a href="{{ e.get_delete_url }}">, Delete </a>
 		</li>
 		{% endfor %}
 	</ul>
 {% else %}
-	<p> {{ timetableName }}timetable has no exam dates</p>
+	<h3> No exams are added for this timetable </h3>
 {% endif %}
 
 {% endblock %}

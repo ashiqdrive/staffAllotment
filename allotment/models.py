@@ -20,7 +20,7 @@ class Department(models.Model):
         verbose_name='Department'
         verbose_name_plural='Departments'
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.name}, {self.shift}'
 
 class Staff(models.Model):
     name=models.CharField(max_length=200, null=False, blank=False)
@@ -31,7 +31,7 @@ class Staff(models.Model):
         verbose_name = "Staff"
         verbose_name_plural = "Staffs"
     def __str__(self):
-        return f'{self.name}, {self.department}'
+        return f'{self.name}'
 
 class TimeTable(models.Model):
     shortname=models.CharField(max_length=20, help_text='Enter a short name for timetable, this name is not displayed in the report')
@@ -62,5 +62,8 @@ class Exam(models.Model):
     noOfStudents=models.IntegerField(null=False, blank=True, default=0, help_text='No of students appearing for this exam')
     staffs=models.ManyToManyField(Staff, help_text='Select staffs for the exam', blank=True)
 
+    def get_delete_url(self):
+        return reverse('exam_delete', args=[str(self.id)])
+        
     def __str__(self):
         return f' {self.dateOfExam}'

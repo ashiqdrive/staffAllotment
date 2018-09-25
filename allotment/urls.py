@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('timetable/', views.TimeTableList.as_view(), name='timetableList'),
+    path('staff/', views.staffList, name='staff_index'),
 ]
 
 # Add URLConf to create, update, and delete TimeTable
@@ -15,5 +16,13 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    path('exam/create', views.ExamCreate.as_view(),name='exam_create'),
+    path('exam/create', views.ExamCreate.as_view(), name='exam_create'),
+    path('exam/<int:pk>/delete/', views.ExamDelete.as_view(), name='exam_delete')
+]
+
+urlpatterns += [  
+    path('staff/create/', views.StaffCreate.as_view(), name='staff_create'),
+    #path('staff/<int:pk>/update/', views.StaffUpdate.as_view(), name='staff_update'),
+    #path('staff/<int:pk>/delete/', views.StaffDelete.as_view(), name='staff_delete'),
+    #path('staff/<int:pk>/detail/', views.staff_detail, name='staff_detail'),
 ]

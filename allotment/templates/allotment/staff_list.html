@@ -1,0 +1,14 @@
+{% block content %}
+  <!-- form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Search</button>
+  </form -->
+  <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+  <ul>
+  {% for staff in filter.qs %}
+    <li>{{ staff.name }}</li>
+  {% endfor %}
+  </ul>
+{% endblock %}
