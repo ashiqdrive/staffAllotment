@@ -11,6 +11,8 @@ class Shift(models.Model):
         verbose_name_plural = "Shifts"
     def __str__(self):
         return f'{self.name}'
+    def get_go_to_staff_list_url(self):
+        return reverse('staff_list', args=[str(self.id)])
 
 class Department(models.Model):
     shift=models.ForeignKey(Shift,on_delete=models.CASCADE)
@@ -26,12 +28,13 @@ class Staff(models.Model):
     name=models.CharField(max_length=200, null=False, blank=False)
     department=models.ForeignKey(Department,on_delete=models.CASCADE, null=False, blank=False)
     dateofJoining=models.DateField(null=False, default=timezone.now)
-    
     class Meta:
         verbose_name = "Staff"
         verbose_name_plural = "Staffs"
     def __str__(self):
         return f'{self.name}'
+    def get_absolute_url(self):
+        return reverse('allot_exam', args=[str(self.id)])
 
 class TimeTable(models.Model):
     shortname=models.CharField(max_length=20, help_text='Enter a short name for timetable, this name is not displayed in the report')
@@ -49,6 +52,8 @@ class TimeTable(models.Model):
         return reverse('timetable_delete', args=[str(self.id)])
     def get_details_url(self):
         return reverse ('timetable_detail', args=[str(self.id)])
+    def get_allot_staff_url(self):
+        return reverse ('staff_index', args=[str(self.id)])
 
 class Exam(models.Model):
     class Meta:

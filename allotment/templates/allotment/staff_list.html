@@ -1,14 +1,19 @@
-{% block content %}
-  <!-- form method="get">
-    {{ filter.form.as_p }}
-    <button type="submit">Search</button>
-  </form -->
-  <form action="" method="get">
-        {{ filter.form.as_p }}
-        <input type="submit" />
-  <ul>
-  {% for staff in filter.qs %}
-    <li>{{ staff.name }}</li>
-  {% endfor %}
-  </ul>
+
+{%block content%}
+
+ <h1>Select Staff</h1> 
+ <p>Staffs are arranged based date of joining</p>
+
+    {% if staffNameList %}
+    <ul>
+      {% for s in staffNameList %}
+      <li>
+        {{ s.name }} <a href="{{ s.get_absolute_url }}"> ,Allot Exam</a><!--go to Allot exam --> 
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>There are No Staffs</p>
+    {% endif %}      
+
 {% endblock %}

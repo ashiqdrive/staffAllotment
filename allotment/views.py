@@ -81,16 +81,38 @@ class ExamDelete(DeleteView):
 #____________________
 #_______ Staff ______
 
-#def staffIndex(request):
-	#return render(request,'allotment/staff_index.html')
+# Code Done using django-filter dependency
+"""from .filters import StaffFilter"""
+
+def staffIndex(request,ttid):
+	""" First Show Which Shift to Select """
+	shiftList=Shift.objects.all()
+	queryset=TimeTable.objects.filter(id=ttid)
+	timetableName=queryset.get().longName
+	request.session['timetableSession'] = ttid
+	request.session['timetableName'] = timetableName
+	context={"shiftList":shiftList,}
+	return render(request, 'allotment/staff_index.html',context=context)
+
+def staffList(request,pk):
+	staffNameList=Staff.objects.filter(department__shift=pk).order_by('dateofJoining')
+	context={'staffNameList': staffNameList}
+	return render(request, 'allotment/staff_list.html', context=context)
+
+def allotExam(request,pk):
+	querysetStaff = Staff.objects.filter(id=pk)
+	staffName=querysetStaff.get().name
+	timetable_id=request.session['timetableSession']
+	examList = Exam.objects.filter(timetable_id=timetable_id)
+	context={
+	'staffName': staffName,
+	'examList': examList,
+	}
+	return render(request, 'allotment/allot_exam.html', context=context)
+
+
 
 class StaffCreate(CreateView):
 	model=Staff
 	fields = '__all__'
 	success_url = reverse_lazy('staff_index')
-
-from .filters import StaffFilter
-def staffList(request):
-	staff_list = Staff.objects.all()
-	staff_filter = StaffFilter(request.GET, queryset=staff_list)
-	return render(request, 'allotment/staff_list.html', {'filter': staff_filter})
