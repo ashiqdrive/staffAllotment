@@ -9,7 +9,11 @@
 	<ul>
 		{% for e in examDateList %}
 		<li>
-			{{e.dateOfExam}} <a href="{{ e.get_delete_url }}">, Delete </a>
+			{{e.dateOfExam}} 
+			<a href="{{e.get_exam_allotstaff_url}}">, Allot Staffs</a>,
+			<a href="{{e.get_edit_url}}"> Edit</a>,
+			<a href="{{e.get_report_url}}"> Generate Report</a>,
+			<a href="{{ e.get_delete_url }}"> Delete </a>
 		</li>
 		{% endfor %}
 	</ul>

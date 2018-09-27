@@ -6,5 +6,4 @@ class SelectExamsForm(forms.Form):
 		super(SelectExamsForm, self).__init__(*args, **kwargs)
 		if qs:
 			self.fields['Exams'] = forms.ModelMultipleChoiceField(
-				queryset=qs, widget=forms.CheckboxSelectMultiple(),
-				initial = choices)
+				queryset=qs, widget=forms.CheckboxSelectMultiple())

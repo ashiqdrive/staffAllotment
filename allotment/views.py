@@ -10,11 +10,7 @@ def index(request):
 	StaffListCount=Staff.objects.count()
 	StaffNamesList=Staff.objects.filter(department__shift=1).order_by('name')
 
-	context={
-	'StaffListCount':StaffListCount,
-	'StaffNamesList':StaffNamesList
-	}
-	return render(request,'index.html', context=context)
+	return render(request,'index.html')
 
 #____________________
 #_____TimeTable _____
@@ -78,48 +74,42 @@ class ExamDelete(DeleteView):
 		timetable_id=self.request.session['timetableSession']
 		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
 
-#____________________
-#_______ Staff ______
+from django.forms.models import modelform_factory
+from django import forms
 
-# Code Done using django-filter dependency
-"""from .filters import StaffFilter"""
+class ExamAllotStaff(UpdateView):
+	""" Used to select staff names with a multi choice tick box """
+	model = Exam
 
-def staffIndex(request,ttid):
-	""" First Show Which Shift to Select """
-	shiftList=Shift.objects.all()
-	queryset=TimeTable.objects.filter(id=ttid)
-	timetableName=queryset.get().longName
-	request.session['timetableSession'] = ttid
-	request.session['timetableName'] = timetableName
-	context={"shiftList":shiftList,}
-	return render(request, 'allotment/staff_index.html',context=context)
+	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents','staffs'],
+		widgets={"staffs": forms.CheckboxSelectMultiple()})
 
-def staffList(request,pk):
-	staffNameList=Staff.objects.filter(department__shift=pk).order_by('dateofJoining')
-	context={'staffNameList': staffNameList}
-	return render(request, 'allotment/staff_list.html', context=context)
+	def get_form(self, form_class=form_class):
+		form = super(ExamAllotStaff,self).get_form(form_class) #instantiate using parent
+		form.fields['staffs'].queryset = Staff.objects.all().filter(department__shift=1).order_by('-dateofJoining')
+		form.fields['timetable_id'].disabled=True
+		form.fields['dateOfExam'].disabled=True
+		form.fields['noOfStudents'].disabled=True
+		return form
 
-def allotExam(request,pk):
-	querysetStaff = Staff.objects.filter(id=pk)
-	staffName=querysetStaff.get().name
-	timetable_id=request.session['timetableSession']
-	examList = Exam.objects.filter(timetable_id=timetable_id)
-	context={
-	'staffName': staffName,
-	'examList': examList,
-	}
-	return render(request, 'allotment/allot_exam.html', context=context)
+	def get_success_url(self):
+		timetable_id=self.request.session['timetableSession']
+		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
 
-class StaffCreate(CreateView):
-	model=Staff
-	fields = '__all__'
-	success_url = reverse_lazy('staff_index')
+class ExamEdit(UpdateView):
+	""" Used to Edit no of students attending for this exam """
+	model = Exam
+	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents'])
+	def get_form(self, form_class=form_class):
+		form = super(ExamEdit,self).get_form(form_class) #instantiate using parent
+		form.fields['timetable_id'].disabled=True
+		form.fields['dateOfExam'].disabled=True
+		return form
+	def get_success_url(self):
+		timetable_id=self.request.session['timetableSession']
+		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
 
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from .forms import SelectExamsForm
-
-def selectExamsForStaffsForATimeTable(request,pk):
+"""def selectExamsForStaffsForATimeTable(request,pk):
 	#Getting Staff Name
 	querysetStaff = Staff.objects.filter(id=pk)
 	staffName = querysetStaff.get().name
@@ -129,17 +119,55 @@ def selectExamsForStaffsForATimeTable(request,pk):
 	#Exam query Set
 	qs = Exam.objects.filter(timetable_id=timetable_id)
 	qs2 = Exam.objects.filter(staffs=pk)
+
 	exam_instance = get_object_or_404(Exam, pk=pk)
-	#Declaring Form
-	form = SelectExamsForm(qs,qs2)
-	context = {'form':form, 'staffName':staffName, 'timetableName':timetableName}
-	return render_to_response('allotment/exam_form.html', context=context)
-	"""# If this is a POST request then process the Form data
-#if request.method == 'POST':
-Create a form instance and populate it with data from the request (binding):
-#form = SelectExamsForm(request.POST)
-   
-# Else If this is a GET (or any other method) create the default form
-else:
-form = SelectExamsForm(qs)
-return render_to_response('exam_form.html', {'form': form},)"""
+
+	# If this is a POST request then process the Form data
+	if request.method == 'POST':
+		form = SelectExamsForm(request.POST)
+
+		# Check if the form is valid:
+		if form.is_valid():
+			# process the data in form.cleaned_data as required (here we just write it to the model due_back field)
+			examdates = form.cleaned_data['Exams']
+			for e in examdates:
+				e.staffs.add(pk)
+				e.save()
+			# redirect to a new URL:
+			return HttpResponseRedirect(reverse('staff_list') )
+	else:
+		#Declaring Form
+		form = SelectExamsForm(qs,qs2)
+		context = {'form':form, 'staffName':staffName, 'timetableName':timetableName}
+	return render_to_response('allotment/exam_form.html', context=context)"""
+
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.units import inch
+
+def report(request,pk):
+	
+	queryset=Exam.objects.filter(id=pk)
+	
+	# Create the HttpResponse object with the appropriate PDF headers.
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename=somefilename.pdf'
+
+	c = canvas.Canvas(response)
+	c.setPageSize(A4)
+	c.setFont("Helvetica", 14)
+
+	i=10
+	j=750
+	for s in queryset:
+		c.drawString(i,j,str(s.staffs__name))
+		j=j-10
+
+	c.showPage()
+	c.save()
+	return response

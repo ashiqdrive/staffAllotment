@@ -4,19 +4,4 @@
 <br>
 <h3><a href="{% url 'timetableList' %}"> Timetables Management </a></h3>
 
-<p>The Staff Count is : {{StaffListCount}} </p>
-
-{% if StaffNamesList %}
-	<p>Names of Staffs</p>
-	<ul>
-		{% for staffNames in StaffNamesList %}
-		<li>
-			{{staffNames.name}}
-		</li>
-		{% endfor %}
-	</ul>
-{% else %}
-	<p>There are no Staffs</p>
-{% endif %}
-
 {% endblock %}
