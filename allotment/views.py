@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from .models import Shift, Department, Staff, TimeTable, Exam
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -110,9 +110,36 @@ def allotExam(request,pk):
 	}
 	return render(request, 'allotment/allot_exam.html', context=context)
 
-
-
 class StaffCreate(CreateView):
 	model=Staff
 	fields = '__all__'
 	success_url = reverse_lazy('staff_index')
+
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from .forms import SelectExamsForm
+
+def selectExamsForStaffsForATimeTable(request,pk):
+	#Getting Staff Name
+	querysetStaff = Staff.objects.filter(id=pk)
+	staffName = querysetStaff.get().name
+	#Get Timetable id from Sessions
+	timetable_id = request.session['timetableSession']
+	timetableName = request.session['timetableName'] 
+	#Exam query Set
+	qs = Exam.objects.filter(timetable_id=timetable_id)
+	qs2 = Exam.objects.filter(staffs=pk)
+	exam_instance = get_object_or_404(Exam, pk=pk)
+	#Declaring Form
+	form = SelectExamsForm(qs,qs2)
+	context = {'form':form, 'staffName':staffName, 'timetableName':timetableName}
+	return render_to_response('allotment/exam_form.html', context=context)
+	"""# If this is a POST request then process the Form data
+#if request.method == 'POST':
+Create a form instance and populate it with data from the request (binding):
+#form = SelectExamsForm(request.POST)
+   
+# Else If this is a GET (or any other method) create the default form
+else:
+form = SelectExamsForm(qs)
+return render_to_response('exam_form.html', {'form': form},)"""
