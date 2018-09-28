@@ -152,8 +152,7 @@ from reportlab.lib.units import inch
 
 def report(request,pk):
 	
-	queryset=Exam.objects.filter(id=pk)
-	
+	queryset=Staff.objects.filter(exam__id=pk)	
 	# Create the HttpResponse object with the appropriate PDF headers.
 	response = HttpResponse(content_type='application/pdf')
 	response['Content-Disposition'] = 'attachment; filename=somefilename.pdf'
@@ -165,8 +164,9 @@ def report(request,pk):
 	i=10
 	j=750
 	for s in queryset:
-		c.drawString(i,j,str(s.staffs__name))
-		j=j-10
+		staffDetail = f'{str(s.name)}, {str(s.department)}'
+		c.drawString(i,j,staffDetail)
+		j=j-20
 
 	c.showPage()
 	c.save()
