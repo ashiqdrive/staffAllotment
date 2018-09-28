@@ -161,13 +161,18 @@ def report(request,pk):
 	c.setPageSize(A4)
 	c.setFont("Helvetica", 14)
 
-	i=10
-	j=750
+	i=5 #Horizontal
+	j=750 #Vertical
+	a=790
+	k=250 #Horizontal
+	c.drawString(i,a,"Name")
+	c.drawString(k,a,"Department")
 	for s in queryset:
-		staffDetail = f'{str(s.name)}, {str(s.department)}'
-		c.drawString(i,j,staffDetail)
+		staffName = str(s.name)
+		department = str(s.department)
+		c.drawString(i,j,staffName)
+		c.drawString(k,j,department)
 		j=j-20
-
 	c.showPage()
 	c.save()
 	return response
