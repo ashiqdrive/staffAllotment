@@ -45,6 +45,53 @@ def timetable_detail(request, pk):
 	request.session['timetableName'] = timetableName
 	return render(request,'allotment/timetable_detail.html',context=context)
 
+# New Detailed View of TimeTable
+def timetableDetailedView(request, ttid):
+	queryset=TimeTable.objects.filter(id=ttid)
+	timetableName=queryset.get().longName
+	examDateList=Exam.objects.filter(timetable_id=ttid).order_by('dateOfExam')
+	context={
+	'examDateList':examDateList,
+	'timetableName':timetableName,
+	'ttid':ttid,
+	}
+	#request.session['timetableSession'] = ttid
+	#request.session['timetableName'] = timetableName
+	return render(request,'allotment/timetable_detail.html',context=context)
+
+class AddExam(CreateView):
+	model = Exam
+	fields=['timetable_id','dateOfExam']
+	HEADING="Add Exams"
+	template_name = 'allotment/add_exam.html'
+
+	def get_context_data(self, **kwargs): #Code to sent context to templete
+		ctx = super(AddExam,self).get_context_data(**kwargs)
+		ctx['HEADING'] = self.HEADING 
+		return ctx
+
+	def get_initial(self): # Code to set initial values in the form
+		ttid = self.kwargs['ttid'] # code to get the parameter from url
+		return { 'timetable_id':ttid }
+
+	def get_success_url(self):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+
+class DelExam(DeleteView):
+	model = Exam
+	pk_url_kwarg = 'exid'
+
+	def get_context_data(self, **kwargs):
+		ctx = super(DelExam,self).get_context_data(**kwargs)
+		queryset=TimeTable.objects.filter(id=ttid)
+		timetableName=queryset.get().longName
+		ctx['timetableName'] = timetableName
+		return ctx
+
+	def get_success_url(self):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
 #_____________________
 #_______ Exam ________
 class ExamCreate(CreateView):

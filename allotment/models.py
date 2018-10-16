@@ -52,6 +52,8 @@ class TimeTable(models.Model):
         return reverse('timetable_delete', args=[str(self.id)])
     def get_details_url(self):
         return reverse ('timetable_detail', args=[str(self.id)])
+    def get_detailedView_url(self):
+        return reverse ('timetableDetailedView', args=[str(self.id)])
     def get_allot_staff_url(self):
         return reverse ('staff_index', args=[str(self.id)])
 
