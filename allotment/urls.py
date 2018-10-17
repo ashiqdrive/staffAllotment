@@ -16,14 +16,20 @@ urlpatterns += [
     path('timetable/<int:ttid>/', views.timetableDetailedView, name = 'timetableDetailedView'),
     path('timetable/<int:ttid>/addexam/', views.AddExam.as_view(), name = 'add_exam'),
     path('timetable/<int:ttid>/exam/<int:exid>/delete/', views.DelExam.as_view(), name = 'del_exam'),
+    path('timetable/<int:ttid>/exam/<int:exid>/allotstaff/', views.selectShift, name = 'select_shift_to_allot_staff'),
+    path('timetable/<int:ttid>/exam/<int:exid>/allotstaff/shift/<int:shid>/', views.AllotStaffForExam.as_view(), name = 'allot_staff'),
+    path('timetable/<int:ttid>/exam/<int:exid>/reportbyexam/', views.reportByExam, name = 'reportbyexam'),
+    path('timetable/<int:ttid>/reportbystaff/', views.reportByStaff, name = 'reportbystaff'),
+
+
 ]
 
 urlpatterns += [
-    path('exam/create', views.ExamCreate.as_view(), name='exam_create'),
-    path('exam/<int:pk>/delete/', views.ExamDelete.as_view(), name='exam_delete'),
-    path('exam/<int:pk>/edit/', views.ExamEdit.as_view(), name='exam_edit'),
-    path('exam/<int:pk>/allotstaff/', views.ExamAllotStaff.as_view(), name='exam_allotstaff'),
-    path('exam/<int:pk>/report/', views.report, name='report'),
+    #path('exam/create', views.ExamCreate.as_view(), name='exam_create'),
+    #path('exam/<int:pk>/delete/', views.ExamDelete.as_view(), name='exam_delete'),
+    #path('exam/<int:pk>/edit/', views.ExamEdit.as_view(), name='exam_edit'),
+    #path('exam/<int:pk>/allotstaff/', views.ExamAllotStaff.as_view(), name='exam_allotstaff'),
+    #path('exam/<int:pk>/report/', views.report, name='report'),
 ]
 
 #Report

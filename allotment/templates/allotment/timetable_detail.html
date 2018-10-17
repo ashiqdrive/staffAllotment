@@ -1,3 +1,4 @@
+
 {%block content%}
 
 <h1>Time Table Details</h1>
@@ -10,10 +11,9 @@
 		{% for e in examDateList %}
 		<li>
 			{{e.dateOfExam}}
-			<a href="{% url 'del_exam' ttid=ttid exid=e.id %}"> Delete </a>
-			<!--<a href="{{e.get_exam_allotstaff_url}}">, Allot Staffs</a>,
-			<a href="{{e.get_edit_url}}"> Edit</a>,
-			<a href="{{e.get_report_url}}"> Generate Report</a>,-->
+			<a href="{% url 'del_exam' ttid=ttid exid=e.id %}"> Delete </a> , 
+			<a href="{% url 'select_shift_to_allot_staff' ttid=ttid exid=e.id %}"> Allot Staff </a> ,
+			<a href="{% url 'reportbyexam' ttid=ttid exid=e.id %}"> Report </a>
 		</li>
 		{% endfor %}
 	</ul>

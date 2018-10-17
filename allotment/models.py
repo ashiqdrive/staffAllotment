@@ -72,15 +72,14 @@ class Exam(models.Model):
     def get_delete_url(self):
         return reverse('exam_delete', args=[str(self.id)])
 
-    def get_exam_allotstaff_url(self):
-        return reverse('exam_allotstaff', args=[str(self.id)])
+    #def get_exam_allotstaff_url(self):
+        #return reverse('exam_allotstaff', args=[str(self.id)])
 
     def get_edit_url(self):
         return reverse('exam_edit', args=[str(self.id)])
         
     def get_report_url(self):
         return reverse('report', args=[str(self.id)])
-        
         
     def __str__(self):
         return f' {self.dateOfExam}'

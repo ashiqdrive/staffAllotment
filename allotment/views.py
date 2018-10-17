@@ -4,6 +4,9 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
+from django.forms.models import modelform_factory
+from django import forms
+
 
 def index(request):
 	"""View Function of Home Page"""
@@ -59,6 +62,7 @@ def timetableDetailedView(request, ttid):
 	#request.session['timetableName'] = timetableName
 	return render(request,'allotment/timetable_detail.html',context=context)
 
+# Class based Generic Create View to create and Add New Exam for a particular timetable
 class AddExam(CreateView):
 	model = Exam
 	fields=['timetable_id','dateOfExam']
@@ -78,6 +82,7 @@ class AddExam(CreateView):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
 
+# Class Based generic Delete View to Delete a Exam belonging to a particular timetable
 class DelExam(DeleteView):
 	model = Exam
 	pk_url_kwarg = 'exid'
@@ -92,8 +97,23 @@ class DelExam(DeleteView):
 	def get_success_url(self):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
-#_____________________
+
+# Method to Select Shift to Allot Staff
+def selectShift(request,ttid,exid):
+	queryset=Shift.objects.all()
+	ttid = ttid
+	exid = exid
+	context = {
+	'ttid':ttid,
+	'exid':exid,
+	'shiftList':queryset,
+	}
+	return render(request,'allotment/select_shift.html', context=context)
+
+
+#__Old Exam Code Snippet
 #_______ Exam ________
+"""
 class ExamCreate(CreateView):
 	model=Exam
 	fields=['timetable_id','dateOfExam','noOfStudents']
@@ -120,12 +140,8 @@ class ExamDelete(DeleteView):
 	def get_success_url(self):
 		timetable_id=self.request.session['timetableSession']
 		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
-
-from django.forms.models import modelform_factory
-from django import forms
-
 class ExamAllotStaff(UpdateView):
-	""" Used to select staff names with a multi choice tick box """
+	#Used to select staff names with a multi choice tick box
 	model = Exam
 
 	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents','staffs'],
@@ -141,10 +157,31 @@ class ExamAllotStaff(UpdateView):
 
 	def get_success_url(self):
 		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
+		return reverse_lazy('timetable_detail',args=[str(timetable_id)])"""
 
-class ExamEdit(UpdateView):
-	""" Used to Edit no of students attending for this exam """
+class AllotStaffForExam(UpdateView):
+	""" Used to select staff names with a multi choice tick box """
+	model = Exam
+	pk_url_kwarg = 'exid'
+
+	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents','staffs'],
+		widgets={"staffs": forms.CheckboxSelectMultiple()})
+
+	def get_form(self, form_class=form_class):
+		shid = self.kwargs['shid'] # code to get the parameter from url 
+		form = super(AllotStaffForExam,self).get_form(form_class) #instantiate using parent
+		form.fields['staffs'].queryset = Staff.objects.all().filter(department__shift=shid).order_by('-dateofJoining')
+		form.fields['timetable_id'].disabled=True
+		form.fields['dateOfExam'].disabled=True
+		form.fields['noOfStudents'].disabled=True
+		return form
+
+	def get_success_url(self):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+
+"""class ExamEdit(UpdateView):
+	#Used to Edit no of students attending for this exam
 	model = Exam
 	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents'])
 	def get_form(self, form_class=form_class):
@@ -154,7 +191,34 @@ class ExamEdit(UpdateView):
 		return form
 	def get_success_url(self):
 		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
+		return reverse_lazy('timetable_detail',args=[str(timetable_id)])"""
+
+def reportByExam(request,ttid,exid):
+	queryset=Staff.objects.filter(exam__id=exid)
+	timetableName = TimeTable.objects.filter(id = ttid).get().longName
+	dateOfExam = Exam.objects.filter(id = exid).get().dateOfExam
+	ttid = ttid
+	exid = exid
+	context = {
+	'ttid':ttid,
+	'exid':exid,
+	'staffList':queryset,
+	'timetableName':timetableName,
+	'dateOfExam':dateOfExam
+	}
+	return render(request,'allotment/report_by_exam.html', context=context)
+
+def reportByStaff(request,ttid):
+	staffList = Staff.objects.filter(exam__timetable_id=ttid)
+	timetableName = TimeTable.objects.filter(id = ttid).get().longName
+	ttid = ttid
+	context = {
+	'ttid':ttid,
+	'staffList':staffList,
+	'timetableName':timetableName,
+	}
+	return render(request,'allotment/report_by_staffs.html', context=context)
+
 
 """def selectExamsForStaffsForATimeTable(request,pk):
 	#Getting Staff Name

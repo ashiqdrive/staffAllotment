@@ -1,3 +1,4 @@
+
 {%block content%}
 
   <style>
@@ -13,6 +14,7 @@
         <th>Short Name </th>
         <th>Long Name </th>
         <th>Details</th>
+        <th>Detailed View (New)</th>
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -24,6 +26,7 @@
         <td> <a href="{{ t.get_detailedView_url}}">Detailed View</a> </td>
         <td> <a href="{{ t.get_update_url }}">Edit</a> </td>
         <td> <a href="{{ t.get_delete_url }}">Delete</a> </td>
+        <td> <a href="{% url 'reportbystaff' t.id %}"> Report Staffs </a></td>
       </tr>
       {% endfor %}
     </table>
