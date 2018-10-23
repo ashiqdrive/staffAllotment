@@ -20,8 +20,6 @@ urlpatterns += [
     path('timetable/<int:ttid>/exam/<int:exid>/allotstaff/shift/<int:shid>/', views.AllotStaffForExam.as_view(), name = 'allot_staff'),
     path('timetable/<int:ttid>/exam/<int:exid>/reportbyexam/', views.reportByExam, name = 'reportbyexam'),
     path('timetable/<int:ttid>/reportbystaff/', views.reportByStaff, name = 'reportbystaff'),
-
-
 ]
 
 urlpatterns += [

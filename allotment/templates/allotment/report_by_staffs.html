@@ -7,17 +7,14 @@
 
 
 {% if staffList %}
-{% for s in staffList %}
-<p> Prof. Mr {{ s.name }} of the {{ s.department }} department is requested to invidulate for the following dates </p>
- <table style="width:50%">
- 	<tr>
- 		<th></th>
- 	</tr>
-    <tr>
-     	<td></td>
-    </tr>
- </table>
- {% endfor %}
+    {% for s in staffList %}
+        <p> Prof. Mr {{ s.name }} of the {{ s.department }} department the following dates </p>
+        {% for i in qset %}
+            {% if i.id == s.id and i.exam__timetable_id == ttid %}
+                <ul> {{ i.exam__dateOfExam }} </ul>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 {% else %}
 <p>No Staffs are alloted for this time table</p>
 {% endif %}

@@ -180,6 +180,8 @@ class AllotStaffForExam(UpdateView):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
 
+
+
 """class ExamEdit(UpdateView):
 	#Used to Edit no of students attending for this exam
 	model = Exam
@@ -209,13 +211,15 @@ def reportByExam(request,ttid,exid):
 	return render(request,'allotment/report_by_exam.html', context=context)
 
 def reportByStaff(request,ttid):
-	staffList = Staff.objects.filter(exam__timetable_id=ttid)
+	staffList = Staff.objects.filter(exam__timetable_id=ttid).distinct()
+	qset = Staff.objects.values('id', 'exam__timetable_id', 'exam__dateOfExam').order_by('exam__dateOfExam')
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	ttid = ttid
 	context = {
 	'ttid':ttid,
 	'staffList':staffList,
 	'timetableName':timetableName,
+	'qset':qset,
 	}
 	return render(request,'allotment/report_by_staffs.html', context=context)
 
