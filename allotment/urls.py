@@ -22,6 +22,15 @@ urlpatterns += [
     path('timetable/<int:ttid>/reportbystaff/', views.reportByStaff, name = 'reportbystaff'),
 ]
 
+# 
+# ---- New Implementation Urls to allot duty for staffs --- NEW 23 - OCT - 2018 ----- 
+urlpatterns += [ 
+    path('timetable/<int:ttid>/allotduty/', views.allotDuty_SelectShift, name='allotDuty_SelectShift'),
+    path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/', views.allotDuty_Staff_List_by_Shift, name='allotDuty_Staff_List_by_Shift'),
+    path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/staff/<int:staffid>/', views.AllotDutyMain.as_view(), name='allotDutyMain'),
+]
+
+
 urlpatterns += [
     #path('exam/create', views.ExamCreate.as_view(), name='exam_create'),
     #path('exam/<int:pk>/delete/', views.ExamDelete.as_view(), name='exam_delete'),

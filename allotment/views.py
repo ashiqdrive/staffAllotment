@@ -110,6 +110,47 @@ def selectShift(request,ttid,exid):
 	}
 	return render(request,'allotment/select_shift.html', context=context)
 
+#Method to select shift to allot duty
+def allotDuty_SelectShift(request,ttid):
+	queryset=Shift.objects.all()
+	ttid = ttid
+	context = {
+	'ttid':ttid,
+	'shiftList':queryset,
+	}
+	return render(request,'allotment/allot_duty_select_shift.html', context=context)
+
+#Method to display Staff List by Shift
+def allotDuty_Staff_List_by_Shift(request,ttid,shiftid):
+	queryset = Staff.objects.all().filter(department__shift = shiftid).order_by('-dateofJoining')
+	ttid = ttid
+	shiftid = shiftid
+	context = {
+	'ttid': ttid,
+	'staffByShiftList': queryset,
+	'shiftid' : shiftid
+	}
+	return render(request,'allotment/allotDuty_staff_list_by_shift.html', context=context)
+
+#Main method to Allot duty for staffs i.e to select exams for staffs
+class AllotDutyMain(UpdateView):
+	""" Used to select staff names with a multi choice tick box """
+	model = Staff
+	pk_url_kwarg = 'staffid'
+
+	form_class =  modelform_factory(Staff, fields=['exam'],
+		widgets={"exam": forms.CheckboxSelectMultiple()})
+
+	def get_form(self, form_class=form_class):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
+		form = super(AllotDutyMain,self).get_form(form_class) #instantiate using parent
+		form.fields['exam'].queryset = Exam.objects.all().filter(timetable_id = ttid).order_by('dateOfExam')
+		return form
+
+	def get_success_url(self):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+	
 
 #__Old Exam Code Snippet
 #_______ Exam ________

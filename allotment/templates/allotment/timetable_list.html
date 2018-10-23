@@ -27,6 +27,7 @@
         <td> <a href="{{ t.get_update_url }}">Edit</a> </td>
         <td> <a href="{{ t.get_delete_url }}">Delete</a> </td>
         <td> <a href="{% url 'reportbystaff' t.id %}"> Report Staffs </a></td>
+        <td> <a href="{% url 'allotDuty_SelectShift' t.id %}">Allot Staffs </a></td>
       </tr>
       {% endfor %}
     </table>
