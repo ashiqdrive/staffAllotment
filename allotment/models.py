@@ -28,6 +28,7 @@ class Staff(models.Model):
     name=models.CharField(max_length=200, null=False, blank=False)
     department=models.ForeignKey(Department,on_delete=models.CASCADE, null=False, blank=False)
     dateofJoining=models.DateField(null=False, default=timezone.now)
+    exams=models.ManyToManyField('Exam', help_text='Select Exams for the staffs', blank=True)
     class Meta:
         verbose_name = "Staff"
         verbose_name_plural = "Staffs"
@@ -67,7 +68,7 @@ class Exam(models.Model):
     timetable_id=models.ForeignKey(TimeTable,on_delete=models.CASCADE,blank=False)
     dateOfExam=models.DateField(null=False, blank=False, default=timezone.now)
     noOfStudents=models.IntegerField(null=False, blank=True, default=0, help_text='No of students appearing for this exam')
-    staffs=models.ManyToManyField(Staff, help_text='Select staffs for the exam', blank=True)
+    #staffs=models.ManyToManyField(Staff, help_text='Select staffs for the exam', blank=True)
 
     def get_delete_url(self):
         return reverse('exam_delete', args=[str(self.id)])

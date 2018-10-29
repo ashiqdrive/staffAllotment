@@ -9,6 +9,6 @@ admin.site.register(Exam)
 
 @admin.register(Staff)
 class StaffAdmin(admin.ModelAdmin):
-    fields = ['name', 'department','dateofJoining',]
+    fields = ['name', 'department','dateofJoining','exam']
     list_display = ('name', 'department')
     list_filter = ['department']

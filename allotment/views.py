@@ -123,6 +123,7 @@ def allotDuty_SelectShift(request,ttid):
 #Method to display Staff List by Shift
 def allotDuty_Staff_List_by_Shift(request,ttid,shiftid):
 	queryset = Staff.objects.all().filter(department__shift = shiftid).order_by('-dateofJoining')
+	shiftName = Shift.objects.get(id=shiftid)
 	ttid = ttid
 	shiftid = shiftid
 	context = {
@@ -134,84 +135,40 @@ def allotDuty_Staff_List_by_Shift(request,ttid,shiftid):
 
 #Main method to Allot duty for staffs i.e to select exams for staffs
 class AllotDutyMain(UpdateView):
-	""" Used to select staff names with a multi choice tick box """
+	""" Used to select Exams for Staffs based on a Timetable id"""
 	model = Staff
 	pk_url_kwarg = 'staffid'
 
-	form_class =  modelform_factory(Staff, fields=['exam'],
-		widgets={"exam": forms.CheckboxSelectMultiple()})
+	#fields = ['name','department','exams']
+
+	form_class =  modelform_factory(Staff,fields=['id','name','department','exams'],
+		widgets={"exams": forms.CheckboxSelectMultiple()})
 
 	def get_form(self, form_class=form_class):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		form = super(AllotDutyMain,self).get_form(form_class) #instantiate using parent
-		form.fields['exam'].queryset = Exam.objects.all().filter(timetable_id = ttid).order_by('dateOfExam')
+		form.fields['exams'].queryset = Exam.objects.all().filter(timetable_id = ttid).order_by('dateOfExam')
 		return form
 
 	def get_success_url(self):
-		ttid = self.kwargs['ttid'] # code to get the parameter from url 
-		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
-	
-
-#__Old Exam Code Snippet
-#_______ Exam ________
-"""
-class ExamCreate(CreateView):
-	model=Exam
-	fields=['timetable_id','dateOfExam','noOfStudents']
-	HEADING="Add Exams"
-	def get_initial(self):
-		timetable_id=self.request.session['timetableSession']
-		return { 'timetable_id':timetable_id }
-	def get_context_data(self, **kwargs):
-		ctx = super(ExamCreate,self).get_context_data(**kwargs)
-		ctx['HEADING'] = self.HEADING
-		return ctx
-	def get_success_url(self):
-		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
-
-class ExamDelete(DeleteView):
-	model = Exam
-
-	def get_context_data(self, **kwargs):
-		ctx = super(ExamDelete,self).get_context_data(**kwargs)
-		ctx['timetableName'] = self.request.session['timetableName']
-		return ctx
-
-	def get_success_url(self):
-		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])
-class ExamAllotStaff(UpdateView):
-	#Used to select staff names with a multi choice tick box
-	model = Exam
-
-	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents','staffs'],
-		widgets={"staffs": forms.CheckboxSelectMultiple()})
-
-	def get_form(self, form_class=form_class):
-		form = super(ExamAllotStaff,self).get_form(form_class) #instantiate using parent
-		form.fields['staffs'].queryset = Staff.objects.all().filter(department__shift=1).order_by('-dateofJoining')
-		form.fields['timetable_id'].disabled=True
-		form.fields['dateOfExam'].disabled=True
-		form.fields['noOfStudents'].disabled=True
-		return form
-
-	def get_success_url(self):
-		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])"""
+		ttid = self.kwargs['ttid'] # code to get the parameter from url
+		shiftid = self.kwargs['shiftid']
+		return reverse_lazy('allotDuty_Staff_List_by_Shift',kwargs={ 'ttid': ttid, 'shiftid':shiftid })
 
 class AllotStaffForExam(UpdateView):
-	""" Used to select staff names with a multi choice tick box """
+	pass
+"""class AllotStaffForExam(UpdateView):
+	Used to select staff names with a multi choice tick box
 	model = Exam
 	pk_url_kwarg = 'exid'
 
-	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents','staffs'],
+	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents'],#'staffs'
 		widgets={"staffs": forms.CheckboxSelectMultiple()})
 
 	def get_form(self, form_class=form_class):
 		shid = self.kwargs['shid'] # code to get the parameter from url 
 		form = super(AllotStaffForExam,self).get_form(form_class) #instantiate using parent
-		form.fields['staffs'].queryset = Staff.objects.all().filter(department__shift=shid).order_by('-dateofJoining')
+		#form.fields['staffs'].queryset = Staff.objects.all().filter(department__shift=shid).order_by('-dateofJoining')
 		form.fields['timetable_id'].disabled=True
 		form.fields['dateOfExam'].disabled=True
 		form.fields['noOfStudents'].disabled=True
@@ -219,7 +176,7 @@ class AllotStaffForExam(UpdateView):
 
 	def get_success_url(self):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
-		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])"""
 
 
 
@@ -252,8 +209,8 @@ def reportByExam(request,ttid,exid):
 	return render(request,'allotment/report_by_exam.html', context=context)
 
 def reportByStaff(request,ttid):
-	staffList = Staff.objects.filter(exam__timetable_id=ttid).distinct()
-	qset = Staff.objects.values('id', 'exam__timetable_id', 'exam__dateOfExam').order_by('exam__dateOfExam')
+	staffList = Staff.objects.filter(exams__timetable_id=ttid).distinct().order_by('department__shift','department')
+	qset = Staff.objects.values('id', 'exams__timetable_id', 'exams__dateOfExam').order_by('exams__dateOfExam')
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	ttid = ttid
 	context = {
