@@ -7,7 +7,7 @@ urlpatterns = [
 ]
 
 # Add URLConf to create, update, and delete TimeTable
-urlpatterns += [  
+urlpatterns += [
     path('timetable/create/', views.TimeTableCreate.as_view(), name = 'timetable_create'),
     path('timetable/<int:pk>/update/', views.TimeTableUpdate.as_view(), name = 'timetable_update'),
     path('timetable/<int:pk>/delete/', views.TimeTableDelete.as_view(), name = 'timetable_delete'),
@@ -25,6 +25,7 @@ urlpatterns += [
 # 
 # ---- New Implementation Urls to allot duty for staffs --- NEW 23 - OCT - 2018 ----- 
 urlpatterns += [ 
+    path('timetable/resetexam', views.deleteAllExams, name='deleteAllExams'),
     path('timetable/<int:ttid>/allotduty/', views.allotDuty_SelectShift, name='allotDuty_SelectShift'),
     path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/', views.allotDuty_Staff_List_by_Shift, name='allotDuty_Staff_List_by_Shift'),
     path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/staff/<int:staffid>/', views.AllotDutyMain.as_view(), name='allotDutyMain'),

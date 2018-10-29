@@ -6,7 +6,7 @@
   </style>
 
   <h1>Timetable List</h1>
-  <a href="create/">Create a New Timetable</a>
+  <!--<a href="create/">Create a New Timetable</a>-->
 
   {% if timetable_list %}
     <table style="width:50%">
@@ -26,6 +26,7 @@
         <td> <a href="{{ t.get_detailedView_url}}">Detailed View</a> </td>
         <td> <a href="{{ t.get_update_url }}">Edit</a> </td>
         <td> <a href="{{ t.get_delete_url }}">Delete</a> </td>
+        <td> <a href="{% url 'deleteAllExams' %}">Reset Exams</a> </td>
         <td> <a href="{% url 'reportbystaff' t.id %}"> Report Staffs </a></td>
         <td> <a href="{% url 'allotDuty_SelectShift' t.id %}">Allot Staffs </a></td>
       </tr>

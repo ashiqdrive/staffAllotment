@@ -65,7 +65,7 @@ def timetableDetailedView(request, ttid):
 # Class based Generic Create View to create and Add New Exam for a particular timetable
 class AddExam(CreateView):
 	model = Exam
-	fields=['timetable_id','dateOfExam']
+	fields=['timetable_id','dateOfExam','session']
 	HEADING="Add Exams"
 	template_name = 'allotment/add_exam.html'
 
@@ -97,6 +97,17 @@ class DelExam(DeleteView):
 	def get_success_url(self):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+
+def confirmDelete(request):
+	text = "Are you sure you want to reset the timetable data this willl delete all the exam dates and staffs alloted for the timetable"
+	return render(request, 'allotment/delete_all_exams.html')
+
+from django.http import HttpResponseRedirect
+
+def deleteAllExams(request):
+	#queryset = Exam.objects.all().delete()
+	#queryset.save()
+	return HttpResponseRedirect('')
 
 # Method to Select Shift to Allot Staff
 def selectShift(request,ttid,exid):
@@ -194,7 +205,7 @@ class AllotStaffForExam(UpdateView):
 		return reverse_lazy('timetable_detail',args=[str(timetable_id)])"""
 
 def reportByExam(request,ttid,exid):
-	queryset=Staff.objects.filter(exam__id=exid)
+	queryset=Staff.objects.filter(exams__id=exid)
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	dateOfExam = Exam.objects.filter(id = exid).get().dateOfExam
 	ttid = ttid
@@ -210,7 +221,7 @@ def reportByExam(request,ttid,exid):
 
 def reportByStaff(request,ttid):
 	staffList = Staff.objects.filter(exams__timetable_id=ttid).distinct().order_by('department__shift','department')
-	qset = Staff.objects.values('id', 'exams__timetable_id', 'exams__dateOfExam').order_by('exams__dateOfExam')
+	qset = Staff.objects.values('id', 'exams__timetable_id', 'exams__dateOfExam', 'exams__session__name').order_by('exams__dateOfExam')
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	ttid = ttid
 	context = {

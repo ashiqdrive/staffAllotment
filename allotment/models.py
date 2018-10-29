@@ -60,7 +60,7 @@ class TimeTable(models.Model):
 
 class Exam(models.Model):
     class Meta:
-        unique_together=(('timetable_id','dateOfExam'))
+        unique_together=(('dateOfExam','session'))
         #Timetable id and exam date is together used as a primary key because a timetable cannot have 2 similar dates its just imposible
         verbose_name = "Exam"
         verbose_name_plural = "Exams"
@@ -68,6 +68,7 @@ class Exam(models.Model):
     timetable_id=models.ForeignKey(TimeTable,on_delete=models.CASCADE,blank=False)
     dateOfExam=models.DateField(null=False, blank=False, default=timezone.now)
     noOfStudents=models.IntegerField(null=False, blank=True, default=0, help_text='No of students appearing for this exam')
+    session=models.ForeignKey('Session',on_delete=models.CASCADE,blank=False,default=1)
     #staffs=models.ManyToManyField(Staff, help_text='Select staffs for the exam', blank=True)
 
     def get_delete_url(self):
@@ -83,4 +84,17 @@ class Exam(models.Model):
         return reverse('report', args=[str(self.id)])
         
     def __str__(self):
-        return f' {self.dateOfExam}'
+        return f' {self.dateOfExam} ,{self.session}'
+
+class Session(models.Model):
+
+    class Meta:
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"
+
+    name = models.CharField(max_length=20, null=False, blank=False)
+    shortName = models.CharField(max_length=4, null=False, blank=False)
+
+    def __str__(self):
+        return f' {self.name}'
+    

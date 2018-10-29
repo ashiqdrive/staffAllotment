@@ -2,16 +2,16 @@
 <style>
     table, th, td {border: 1px solid black;border-collapse: collapse;text-align: center; vertical-align: middle;}
   </style>
-<h2>The New College (Autonomous) </h2>
-<h3>{{ timetableName }}</h3>
-
+<h1>{{ timetableName }} Report</h1>
 
 {% if staffList %}
     {% for s in staffList %}
+    <h3> The New College (Autonomous) 
+    </br> Office of the Controller of Examinations </h3>
         <p> Prof. Mr {{ s.name }} of the {{ s.department }} department the following dates </p>
         {% for i in qset %}
             {% if i.id == s.id and i.exams__timetable_id == ttid %}
-                <ul> {{ i.exams__dateOfExam }} </ul>
+                <ul> {{ i.exams__dateOfExam }}, {{ i.exams__session__name }} </ul>
             {% endif %}
         {% endfor %}
     {% endfor %}
