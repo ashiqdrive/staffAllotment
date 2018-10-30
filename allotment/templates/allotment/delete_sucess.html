@@ -1,1 +1,9 @@
-<h1> Timetable Reset sucessful</h1>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+{% block content %}
+<body>
+<h2> Timetable Reset sucessful </h2>
+<a href="{% url 'timetableList' %}" class="button"> home Page </a>
+</body>
+{% endblock %}

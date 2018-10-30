@@ -1,22 +1,28 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 {%block content%}
-
 <h1>Time Table Details</h1>
 <br>
-<a href="{% url 'add_exam' ttid=ttid %}"><h2> Add Exams </h2> </a>
+<a href="{% url 'add_exam' ttid=ttid %}" class="button"><h2> Add Exams </h2> </a>
 <h2>{{ timetableName }}</h2>
 {% if examDateList %}
 	<p>Exam Dates</p>
-	<ul>
+	<table>
+		<tr>
+        	<th> Date </th>
+        	<th> Session </th>
+        	<th> Report </th>
+        	<th> Delete </th>
+    	</tr>
 		{% for e in examDateList %}
-		<li>
-			{{e.dateOfExam}}
-			<a href="{% url 'del_exam' ttid=ttid exid=e.id %}"> Delete </a> , 
-			<a href="{% url 'select_shift_to_allot_staff' ttid=ttid exid=e.id %}"> Allot Staff </a> ,
-			<a href="{% url 'reportbyexam' ttid=ttid exid=e.id %}"> Report </a>
-		</li>
+		<tr>
+			<td> {{ e.dateOfExam }} </td>
+			<td> {{ e.session }} </td>
+			<td> <a href="{% url 'reportbyexam' ttid=ttid exid=e.id %}"> Report </a> </td>
+			<td> <a href="{% url 'del_exam' ttid=ttid exid=e.id %}"> Delete </a> </td>
 		{% endfor %}
-	</ul>
+	</table>
 {% else %}
 	<h3> No exams are added for this timetable </h3>
 {% endif %}

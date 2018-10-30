@@ -1,0 +1,14 @@
+{% block content %}
+<h3> Select Shift </h3>
+{% if shiftList %}
+ <table style="width:50%">
+     {% for s in shiftList %}
+     <tr>
+     	<td><a href="{% url 'staffReportMain' shiftid=s.id %}">{{ s.name }}</a></td>
+     </tr>
+     {% endfor %} 
+ </table>
+{% else %}
+<p>No Shifts Available</p>
+{% endif %}
+{% endblock %}

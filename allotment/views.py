@@ -89,6 +89,7 @@ class DelExam(DeleteView):
 
 	def get_context_data(self, **kwargs):
 		ctx = super(DelExam,self).get_context_data(**kwargs)
+		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		queryset=TimeTable.objects.filter(id=ttid)
 		timetableName=queryset.get().longName
 		ctx['timetableName'] = timetableName
@@ -100,14 +101,14 @@ class DelExam(DeleteView):
 
 def confirmDelete(request):
 	text = "Are you sure you want to reset the timetable data this willl delete all the exam dates and staffs alloted for the timetable"
-	return render(request, 'allotment/delete_all_exams.html')
+	return render(request, 'allotment/confirm_delete_all_exams.html')
 
 from django.http import HttpResponseRedirect
 
 def deleteAllExams(request):
-	#queryset = Exam.objects.all().delete()
-	#queryset.save()
-	return HttpResponseRedirect('')
+	queryset = Exam.objects.all().delete()
+	#return HttpResponseRedirect('')
+	return render(request, 'allotment/delete_sucess.html')
 
 # Method to Select Shift to Allot Staff
 def selectShift(request,ttid,exid):
@@ -208,6 +209,8 @@ def reportByExam(request,ttid,exid):
 	queryset=Staff.objects.filter(exams__id=exid)
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	dateOfExam = Exam.objects.filter(id = exid).get().dateOfExam
+	examName = Exam.objects.filter(id = exid).get()
+	#session = Exam.objects.filter(id = exid).get().session
 	ttid = ttid
 	exid = exid
 	context = {
@@ -215,7 +218,8 @@ def reportByExam(request,ttid,exid):
 	'exid':exid,
 	'staffList':queryset,
 	'timetableName':timetableName,
-	'dateOfExam':dateOfExam
+	'dateOfExam':dateOfExam,
+	'examName':examName
 	}
 	return render(request,'allotment/report_by_exam.html', context=context)
 
@@ -300,3 +304,22 @@ def report(request,pk):
 	c.showPage()
 	c.save()
 	return response
+
+#Method to select shift
+def staffReport(request):
+	queryset=Shift.objects.all()
+	context = {
+	'shiftList':queryset,
+	}
+	return render(request,'allotment/staff_report_select_shift.html', context=context)
+
+
+def staffReportMain(request,shiftid):
+	queryset = Staff.objects.all().filter(department__shift = shiftid).order_by('-dateofJoining')
+	shiftName = Shift.objects.get(id=shiftid)
+	shiftid = shiftid
+	context = {
+	'staffByShiftList': queryset,
+	'shiftid' : shiftid
+	}
+	return render(request,'allotment/staff_report_main.html', context=context)

@@ -1,0 +1,7 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+{% block content %}
+<h3> Are you sure you want to reset the timetable data this willl delete all the exam dates and staffs alloted for the timetable </h3>
+<a href="{% url 'deleteAllExams' %}" class="button buttonRed">Delete</a>
+{% endblock %}

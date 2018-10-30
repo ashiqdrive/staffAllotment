@@ -26,11 +26,11 @@ urlpatterns += [
 # ---- New Implementation Urls to allot duty for staffs --- NEW 23 - OCT - 2018 ----- 
 urlpatterns += [ 
     path('timetable/resetexam', views.deleteAllExams, name='deleteAllExams'),
+    path('timetable/confirmdelete', views.confirmDelete, name='confirmdelete'),
     path('timetable/<int:ttid>/allotduty/', views.allotDuty_SelectShift, name='allotDuty_SelectShift'),
     path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/', views.allotDuty_Staff_List_by_Shift, name='allotDuty_Staff_List_by_Shift'),
     path('timetable/<int:ttid>/allotduty/shift/<int:shiftid>/staff/<int:staffid>/', views.AllotDutyMain.as_view(), name='allotDutyMain'),
 ]
-
 
 urlpatterns += [
     #path('exam/create', views.ExamCreate.as_view(), name='exam_create'),
@@ -46,3 +46,9 @@ urlpatterns+=[
     #path('reportbystaff/', views.report, name='report_by_staff'),
     #path('reportbyexam/', views.report, name='report-by_exam'),
 ]
+
+urlpatterns+=[
+    path('staffreport/', views.staffReport, name='staffReport'),
+    path('staffreport/<int:shiftid>', views.staffReportMain, name='staffReportMain'),
+]
+

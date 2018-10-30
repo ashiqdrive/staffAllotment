@@ -1,6 +1,7 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 {%block content%}
-
   <style>
     table, th, td {border: 1px solid black;border-collapse: collapse;text-align: center; vertical-align: middle;}
   </style>
@@ -11,22 +12,21 @@
   {% if timetable_list %}
     <table style="width:50%">
       <tr>
-        <th>Short Name </th>
-        <th>Long Name </th>
-        <th>Details</th>
-        <th>Detailed View (New)</th>
-        <th>Edit</th>
-        <th>Delete</th>
+        <th> Short Name </th>
+        <th> Long Name </th>
+        <th> Detail </th>
+        <th> Edit </th>
+        <th> Reset </th>
+        <th> Report </th>
+        <th> Allot </th>
       </tr>
       {% for t in timetable_list %}
       <tr>
         <td> {{ t.shortname }} </td>
         <td> {{ t.longName }} </td>
-        <td> <a href="{{ t.get_details_url}}">Details</a> </td>
         <td> <a href="{{ t.get_detailedView_url}}">Detailed View</a> </td>
         <td> <a href="{{ t.get_update_url }}">Edit</a> </td>
-        <td> <a href="{{ t.get_delete_url }}">Delete</a> </td>
-        <td> <a href="{% url 'deleteAllExams' %}">Reset Exams</a> </td>
+        <td> <a href="{% url 'confirmdelete' %}">Reset Exams</a> </td>
         <td> <a href="{% url 'reportbystaff' t.id %}"> Report Staffs </a></td>
         <td> <a href="{% url 'allotDuty_SelectShift' t.id %}">Allot Staffs </a></td>
       </tr>
@@ -35,5 +35,5 @@
   {% else %}
     <p>No Timetables, Create a new one</p>
     <p>Timetables will be listed here</p>
-  {% endif %}      
+  {% endif %}
 {% endblock %}
