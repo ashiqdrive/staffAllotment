@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response
-from .models import Shift, Department, Staff, TimeTable, Exam
+from .models import Shift, Department, Staff, TimeTable, Exam, Session
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -50,16 +50,15 @@ def timetable_detail(request, pk):
 
 # New Detailed View of TimeTable
 def timetableDetailedView(request, ttid):
-	queryset=TimeTable.objects.filter(id=ttid)
-	timetableName=queryset.get().longName
-	examDateList=Exam.objects.filter(timetable_id=ttid).order_by('dateOfExam')
+	timetableName=TimeTable.objects.filter(id=ttid).get().longName
+	oneStaffPer = TimeTable.objects.filter(id = ttid).get().oneStaffPer_Students
+	examDateList=Exam.objects.filter(timetable_id=ttid).order_by('dateOfExam', 'session')
 	context={
 	'examDateList':examDateList,
 	'timetableName':timetableName,
 	'ttid':ttid,
+	'oneStaffPer':oneStaffPer,
 	}
-	#request.session['timetableSession'] = ttid
-	#request.session['timetableName'] = timetableName
 	return render(request,'allotment/timetable_detail.html',context=context)
 
 # Class based Generic Create View to create and Add New Exam for a particular timetable
@@ -82,6 +81,22 @@ class AddExam(CreateView):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
 
+class ExamEdit(UpdateView):
+	#Used to Edit no of students attending for this exam
+	model = Exam
+	pk_url_kwarg = 'exid'
+	form_class =  modelform_factory(Exam,fields=['dateOfExam','noOfStudents'])
+
+	def get_form(self, form_class=form_class):
+		form = super(ExamEdit,self).get_form(form_class) #instantiate using parent
+		#form.fields['timetable_id'].disabled=True
+		form.fields['dateOfExam'].disabled=True
+		return form
+
+	def get_success_url(self):
+		ttid = self.kwargs['ttid'] # code to get the parameter from url
+		return reverse_lazy('timetableDetailedView',args=[str(ttid)])
+
 # Class Based generic Delete View to Delete a Exam belonging to a particular timetable
 class DelExam(DeleteView):
 	model = Exam
@@ -90,8 +105,7 @@ class DelExam(DeleteView):
 	def get_context_data(self, **kwargs):
 		ctx = super(DelExam,self).get_context_data(**kwargs)
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
-		queryset=TimeTable.objects.filter(id=ttid)
-		timetableName=queryset.get().longName
+		timetableName=TimeTable.objects.filter(id=ttid).get().longName
 		ctx['timetableName'] = timetableName
 		return ctx
 
@@ -190,26 +204,12 @@ class AllotStaffForExam(UpdateView):
 		ttid = self.kwargs['ttid'] # code to get the parameter from url 
 		return reverse_lazy('timetableDetailedView',args=[str(ttid)])"""
 
-
-
-"""class ExamEdit(UpdateView):
-	#Used to Edit no of students attending for this exam
-	model = Exam
-	form_class =  modelform_factory(Exam,fields=['timetable_id','dateOfExam','noOfStudents'])
-	def get_form(self, form_class=form_class):
-		form = super(ExamEdit,self).get_form(form_class) #instantiate using parent
-		form.fields['timetable_id'].disabled=True
-		form.fields['dateOfExam'].disabled=True
-		return form
-	def get_success_url(self):
-		timetable_id=self.request.session['timetableSession']
-		return reverse_lazy('timetable_detail',args=[str(timetable_id)])"""
-
 def reportByExam(request,ttid,exid):
 	queryset=Staff.objects.filter(exams__id=exid)
 	timetableName = TimeTable.objects.filter(id = ttid).get().longName
 	dateOfExam = Exam.objects.filter(id = exid).get().dateOfExam
-	examName = Exam.objects.filter(id = exid).get()
+	formatedDate = dateOfExam.strftime("%d-%m-%Y - %A")
+	sessionOfExam = Exam.objects.filter(id = exid).get().session
 	#session = Exam.objects.filter(id = exid).get().session
 	ttid = ttid
 	exid = exid
@@ -218,8 +218,8 @@ def reportByExam(request,ttid,exid):
 	'exid':exid,
 	'staffList':queryset,
 	'timetableName':timetableName,
-	'dateOfExam':dateOfExam,
-	'examName':examName
+	'dateOfExam':formatedDate,
+	'sessionOfExam':sessionOfExam
 	}
 	return render(request,'allotment/report_by_exam.html', context=context)
 
@@ -316,10 +316,20 @@ def staffReport(request):
 
 def staffReportMain(request,shiftid):
 	queryset = Staff.objects.all().filter(department__shift = shiftid).order_by('-dateofJoining')
+	qset = Staff.objects.values('id', 'exams__timetable_id', 'exams__dateOfExam', 'exams__session__name').order_by('exams__dateOfExam')
 	shiftName = Shift.objects.get(id=shiftid)
 	shiftid = shiftid
+	allExam = Exam.objects.all().order_by('dateOfExam', 'session')
+
 	context = {
 	'staffByShiftList': queryset,
-	'shiftid' : shiftid
+	'shiftid' : shiftid,
+	'shiftName': shiftName,
+	'today': get_today(),
+	'allExam':allExam
 	}
 	return render(request,'allotment/staff_report_main.html', context=context)
+
+from datetime import date
+def get_today():
+	return date.today()

@@ -4,20 +4,36 @@
     table, th, td {border: 1px solid black;border-collapse: collapse;text-align: center; vertical-align: middle;}
   </style>
 
-  <h3>Staffs of Shift</h3>
-
+  <h3>Staffs of {{ shiftName }}</h3> 
+  <p> date {{ today }}</p>
   {% if staffByShiftList %}
+
     <table style="width:50%">
       <tr>
         <th> Name </th>
         <th> Department </th>
         <th> D O J </th>
+        <th> No Of Days </th>
+        <th> No of Years </th>
+        {% for e in allExam %}
+          <th> {{ e }} 
+            <table> 
+              <th> FN </th>
+              <th> AN </th>
+            </table>
+          </th>
+        {% endfor %}
       </tr>
       {% for s in staffByShiftList %}
       <tr>
         <td> {{ s.name }} </td>
         <td> {{ s.department }} </td>
         <td> {{ s.dateofJoining }} </td>
+        <td> {{ s.get_no_of_days }} </td>
+        <td> {{ s.get_years_of_experience }} </td>
+        {% for e in allExam %}
+          <td></td>
+        {% endfor %}
       </tr>
       {% endfor %}
     </table>

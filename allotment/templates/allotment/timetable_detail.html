@@ -2,24 +2,36 @@
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
 {%block content%}
+<style>
+    table, th, td {border: 1px solid black;border-collapse: collapse;text-align: center; vertical-align: middle;}
+</style>
 <h1>Time Table Details</h1>
 <br>
-<a href="{% url 'add_exam' ttid=ttid %}" class="button"><h2> Add Exams </h2> </a>
+<a href="{% url 'add_exam' ttid=ttid %}" class="button"> Add Exams </a>
 <h2>{{ timetableName }}</h2>
 {% if examDateList %}
-	<p>Exam Dates</p>
-	<table>
+	<table style="width:50%">
 		<tr>
-        	<th> Date </th>
+			<th> S.No </th>
+        	<th> Exam Date </th>
         	<th> Session </th>
+        	<th> Strength </th>
+        	<th> Required Examiner's </th>
+        	<th> Alloted </th>
         	<th> Report </th>
+        	<th> Edit no of Students </th>
         	<th> Delete </th>
     	</tr>
 		{% for e in examDateList %}
 		<tr>
-			<td> {{ e.dateOfExam }} </td>
+			<td> {{ forloop.counter }}</td>
+			<td> {{ e.dateOfExam | date:"d-M-Y, D" }} </td>
 			<td> {{ e.session }} </td>
-			<td> <a href="{% url 'reportbyexam' ttid=ttid exid=e.id %}"> Report </a> </td>
+			<td> {{ e.noOfStudents }}</td>
+			<td> {{ e.get_no_of_staffs_needed }} </td>
+			<td> {{ e.get_staff_count }}</td>
+			<td> <a href="{% url 'reportbyexam' ttid=ttid exid=e.id %}"> Generate Report </a> </td>
+			<td> <a href="{% url 'edit_exam' ttid=ttid exid=e.id %}"> Edit No of Students </a> </td>
 			<td> <a href="{% url 'del_exam' ttid=ttid exid=e.id %}"> Delete </a> </td>
 		{% endfor %}
 	</table>

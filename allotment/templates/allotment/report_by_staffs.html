@@ -11,7 +11,7 @@
         <p> Prof. Mr {{ s.name }} of the {{ s.department }} department the following dates </p>
         {% for i in qset %}
             {% if i.id == s.id and i.exams__timetable_id == ttid %}
-                <ul> {{ i.exams__dateOfExam }}, {{ i.exams__session__name }} </ul>
+                <li> {{ i.exams__dateOfExam }}, {{ i.exams__session__name }} </li>
             {% endif %}
         {% endfor %}
     {% endfor %}

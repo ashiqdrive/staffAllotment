@@ -16,6 +16,7 @@ urlpatterns += [
     path('timetable/<int:ttid>/', views.timetableDetailedView, name = 'timetableDetailedView'),
     path('timetable/<int:ttid>/addexam/', views.AddExam.as_view(), name = 'add_exam'),
     path('timetable/<int:ttid>/exam/<int:exid>/delete/', views.DelExam.as_view(), name = 'del_exam'),
+    path('timetable/<int:ttid>/exam/<int:exid>/update/', views.ExamEdit.as_view(), name = 'edit_exam'),
     path('timetable/<int:ttid>/exam/<int:exid>/allotstaff/', views.selectShift, name = 'select_shift_to_allot_staff'),
     path('timetable/<int:ttid>/exam/<int:exid>/allotstaff/shift/<int:shid>/', views.AllotStaffForExam.as_view(), name = 'allot_staff'),
     path('timetable/<int:ttid>/exam/<int:exid>/reportbyexam/', views.reportByExam, name = 'reportbyexam'),

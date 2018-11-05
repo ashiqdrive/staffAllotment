@@ -14,21 +14,21 @@
       <tr>
         <th> Short Name </th>
         <th> Long Name </th>
-        <th> Detail </th>
-        <th> Edit </th>
+        <th> Edit Name </th>
+        <th> Exam details  </th>
+        <th> Allot Staffs </th>
+        <th> Generate Report </th>
         <th> Reset </th>
-        <th> Report </th>
-        <th> Allot </th>
       </tr>
       {% for t in timetable_list %}
       <tr>
         <td> {{ t.shortname }} </td>
         <td> {{ t.longName }} </td>
-        <td> <a href="{{ t.get_detailedView_url}}">Detailed View</a> </td>
-        <td> <a href="{{ t.get_update_url }}">Edit</a> </td>
-        <td> <a href="{% url 'confirmdelete' %}">Reset Exams</a> </td>
-        <td> <a href="{% url 'reportbystaff' t.id %}"> Report Staffs </a></td>
-        <td> <a href="{% url 'allotDuty_SelectShift' t.id %}">Allot Staffs </a></td>
+        <td> <a href="{{ t.get_update_url }}"> Edit Name </a> </td>
+        <td> <a href="{{ t.get_detailedView_url}}"> Exam details </a> </td>
+        <td> <a href="{% url 'allotDuty_SelectShift' t.id %}"> Allot Staffs </a></td>
+        <td> <a href="{% url 'reportbystaff' t.id %}"> Generate Report </a></td>
+        <td> <a href="{% url 'confirmdelete' %}"> Reset timetable data </a> </td>
       </tr>
       {% endfor %}
     </table>

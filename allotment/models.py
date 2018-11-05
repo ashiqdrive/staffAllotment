@@ -24,6 +24,9 @@ class Department(models.Model):
     def __str__(self):
         return f'{self.name}, {self.shift}'
 
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
 class Staff(models.Model):
     name=models.CharField(max_length=200, null=False, blank=False)
     department=models.ForeignKey(Department,on_delete=models.CASCADE, null=False, blank=False)
@@ -36,6 +39,16 @@ class Staff(models.Model):
         return f'{self.name}'
     def get_absolute_url(self):
         return reverse('allot_exam', args=[str(self.id)])
+    def get_no_of_days(self):
+        today = date.today()
+        doj = self.dateofJoining
+        return (today-doj).days
+    def get_years_of_experience(self):
+        today = date.today()
+        doj = self.dateofJoining
+        #experienceInYears = relativedelta(today, doj)
+        diff = ((today-doj).days)/365
+        return diff
 
 class TimeTable(models.Model):
     shortname=models.CharField(max_length=20, help_text='Enter a short name for timetable, this name is not displayed in the report')
@@ -82,9 +95,18 @@ class Exam(models.Model):
         
     def get_report_url(self):
         return reverse('report', args=[str(self.id)])
-        
+
+    def get_staff_count(self):
+        return Staff.objects.filter(exams=self).count()
+    
+    def get_no_of_staffs_needed(self):
+        oneStaffPer = TimeTable.objects.filter(id=self.timetable_id_id).get().oneStaffPer_Students
+        staffsRequired=self.noOfStudents/oneStaffPer
+        return int(staffsRequired)
+    
     def __str__(self):
-        return f' {self.dateOfExam} ,{self.session}'
+        formatedDate = self.dateOfExam.strftime("%d-%m-%y, %a")
+        return f' {formatedDate},{self.session.shortName}'
 
 class Session(models.Model):
 

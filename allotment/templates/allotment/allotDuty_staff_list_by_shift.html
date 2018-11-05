@@ -19,7 +19,7 @@
         <td> {{ s.name }} </td>
         <td> {{ s.department }} </td>
         <td> {{ s.dateofJoining }} </td>
-        <td> <a href="{% url 'allotDutyMain' ttid=ttid shiftid=shiftid staffid=s.id %}"> Allot Staffs </a></td>
+        <td> <a href="{% url 'allotDutyMain' ttid=ttid shiftid=shiftid staffid=s.id %}"> Allot Duty</a></td>
       </tr>
       {% endfor %}
     </table>
